@@ -1,0 +1,281 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Database Types
+export interface Database {
+  public: {
+    Tables: {
+      user_profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          email: string;
+          full_name: string;
+          phone: string | null;
+          user_type: 'user' | 'builder' | 'admin';
+          annual_income: string | null;
+          investment_budget: string | null;
+          preferred_locations: string[] | null;
+          is_vip: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          email: string;
+          full_name: string;
+          phone?: string | null;
+          user_type?: 'user' | 'builder' | 'admin';
+          annual_income?: string | null;
+          investment_budget?: string | null;
+          preferred_locations?: string[] | null;
+          is_vip?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          email?: string;
+          full_name?: string;
+          phone?: string | null;
+          user_type?: 'user' | 'builder' | 'admin';
+          annual_income?: string | null;
+          investment_budget?: string | null;
+          preferred_locations?: string[] | null;
+          is_vip?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      companies: {
+        Row: {
+          id: string;
+          name: string;
+          logo_url: string | null;
+          description: string | null;
+          founded_year: number | null;
+          headquarters: string | null;
+          website: string | null;
+          phone: string | null;
+          email: string | null;
+          total_projects: number;
+          rating: number;
+          credibility_score: number;
+          awards: string[] | null;
+          certifications: string[] | null;
+          completed_on_time: number;
+          customer_satisfaction: number;
+          is_verified: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          logo_url?: string | null;
+          description?: string | null;
+          founded_year?: number | null;
+          headquarters?: string | null;
+          website?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          total_projects?: number;
+          rating?: number;
+          credibility_score?: number;
+          awards?: string[] | null;
+          certifications?: string[] | null;
+          completed_on_time?: number;
+          customer_satisfaction?: number;
+          is_verified?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          logo_url?: string | null;
+          description?: string | null;
+          founded_year?: number | null;
+          headquarters?: string | null;
+          website?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          total_projects?: number;
+          rating?: number;
+          credibility_score?: number;
+          awards?: string[] | null;
+          certifications?: string[] | null;
+          completed_on_time?: number;
+          customer_satisfaction?: number;
+          is_verified?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      projects: {
+        Row: {
+          id: string;
+          company_id: string;
+          name: string;
+          description: string | null;
+          location: string;
+          city: string;
+          state: string;
+          pincode: string | null;
+          price_min: number;
+          price_max: number;
+          size_min: number;
+          size_max: number;
+          bedrooms: string[];
+          amenities: string[];
+          images: string[];
+          videos: string[];
+          launch_date: string | null;
+          expected_completion: string | null;
+          status: 'upcoming' | 'ongoing' | 'completed';
+          is_featured: boolean;
+          exclusive_access: boolean;
+          quality_score: number;
+          construction_progress: number;
+          highlights: string[];
+          virtual_tour_url: string | null;
+          floor_plans: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          name: string;
+          description?: string | null;
+          location: string;
+          city: string;
+          state: string;
+          pincode?: string | null;
+          price_min: number;
+          price_max: number;
+          size_min: number;
+          size_max: number;
+          bedrooms: string[];
+          amenities?: string[];
+          images?: string[];
+          videos?: string[];
+          launch_date?: string | null;
+          expected_completion?: string | null;
+          status?: 'upcoming' | 'ongoing' | 'completed';
+          is_featured?: boolean;
+          exclusive_access?: boolean;
+          quality_score?: number;
+          construction_progress?: number;
+          highlights?: string[];
+          virtual_tour_url?: string | null;
+          floor_plans?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          company_id?: string;
+          name?: string;
+          description?: string | null;
+          location?: string;
+          city?: string;
+          state?: string;
+          pincode?: string | null;
+          price_min?: number;
+          price_max?: number;
+          size_min?: number;
+          size_max?: number;
+          bedrooms?: string[];
+          amenities?: string[];
+          images?: string[];
+          videos?: string[];
+          launch_date?: string | null;
+          expected_completion?: string | null;
+          status?: 'upcoming' | 'ongoing' | 'completed';
+          is_featured?: boolean;
+          exclusive_access?: boolean;
+          quality_score?: number;
+          construction_progress?: number;
+          highlights?: string[];
+          virtual_tour_url?: string | null;
+          floor_plans?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      inquiries: {
+        Row: {
+          id: string;
+          user_id: string;
+          project_id: string;
+          rm_id: string | null;
+          name: string;
+          email: string;
+          phone: string;
+          message: string | null;
+          annual_income: string | null;
+          investment_budget: string | null;
+          timeframe: string | null;
+          preferred_contact: 'call' | 'whatsapp' | 'email';
+          request_private_viewing: boolean;
+          request_rm: boolean;
+          status: 'new' | 'contacted' | 'qualified' | 'converted' | 'closed';
+          priority: 'low' | 'medium' | 'high' | 'urgent';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          project_id: string;
+          rm_id?: string | null;
+          name: string;
+          email: string;
+          phone: string;
+          message?: string | null;
+          annual_income?: string | null;
+          investment_budget?: string | null;
+          timeframe?: string | null;
+          preferred_contact?: 'call' | 'whatsapp' | 'email';
+          request_private_viewing?: boolean;
+          request_rm?: boolean;
+          status?: 'new' | 'contacted' | 'qualified' | 'converted' | 'closed';
+          priority?: 'low' | 'medium' | 'high' | 'urgent';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          project_id?: string;
+          rm_id?: string | null;
+          name?: string;
+          email?: string;
+          phone?: string;
+          message?: string | null;
+          annual_income?: string | null;
+          investment_budget?: string | null;
+          timeframe?: string | null;
+          preferred_contact?: 'call' | 'whatsapp' | 'email';
+          request_private_viewing?: boolean;
+          request_rm?: boolean;
+          status?: 'new' | 'contacted' | 'qualified' | 'converted' | 'closed';
+          priority?: 'low' | 'medium' | 'high' | 'urgent';
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+    };
+  };
+}
