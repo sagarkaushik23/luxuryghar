@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Search, MapPin, DollarSign, Home, Filter } from 'lucide-react';
 import { FilterOptions } from '../../types';
 
@@ -6,7 +6,7 @@ interface SearchSectionProps {
   onSearch: (filters: FilterOptions) => void;
 }
 
-const SearchSection: React.FC<SearchSectionProps> = ({ onSearch }) => {
+const SearchSection: React.FC<SearchSectionProps> = memo(({ onSearch }) => {
   const [filters, setFilters] = useState<FilterOptions>({
     priceRange: [0, 50000000],
     location: '',
@@ -21,10 +21,10 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onSearch }) => {
   });
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     onSearch(filters);
-  };
+  }, [filters, onSearch]);
 
   const priceRanges = [
     { label: 'Any Budget', value: '' },
@@ -237,6 +237,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onSearch }) => {
       </div>
     </section>
   );
-};
+});
+
+SearchSection.displayName = 'SearchSection';
 
 export default SearchSection;

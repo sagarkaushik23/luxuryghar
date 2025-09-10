@@ -1,16 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useProjects, useCompanies } from './hooks/useSupabase';
-import AdminApp from './components/Admin/AdminApp';
-import BuilderDashboard from './components/Dashboard/BuilderDashboard';
 import Header from './components/Layout/Header';
 import SearchSection from './components/Home/SearchSection';
 import FeaturedProjects from './components/Home/FeaturedProjects';
 import ProjectCard from './components/Projects/ProjectCard';
-import ProjectDetail from './components/Projects/ProjectDetail';
-import BuilderCard from './components/Builders/BuilderCard';
 import { FilterOptions } from './types';
 import { Building2, Users, Award, Headphones } from 'lucide-react';
+
+// Lazy load heavy components
+const AdminApp = lazy(() => import('./components/Admin/AdminApp'));
+const BuilderDashboard = lazy(() => import('./components/Dashboard/BuilderDashboard'));
+const ProjectDetail = lazy(() => import('./components/Projects/ProjectDetail'));
+const BuilderCard = lazy(() => import('./components/Builders/BuilderCard'));
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="text-center">
+      <div className="w-16 h-16 bg-gradient-to-r from-slate-800 to-amber-500 rounded-lg flex items-center justify-center mx-auto mb-4 animate-pulse">
+        <Building2 className="w-8 h-8 text-white" />
+      </div>
+      <h1 className="text-2xl font-bold text-slate-800 mb-2">LuxuryGhar</h1>
+      <p className="text-slate-600">Loading...</p>
+    </div>
+  </div>
+);
 
 function AppContent() {
   const { user, profile, loading: authLoading } = useAuth();
@@ -19,7 +34,10 @@ function AppContent() {
   const [searchFilters, setSearchFilters] = useState<FilterOptions | null>(null);
 
   // Fetch data from Supabase
-  const { data: allProjects, loading: projectsLoading } = useProjects();
+  const { data: allProjects, loading: projectsLoading } = useProjects(
+    currentPage === 'home' || currentPage === 'projects' || currentPage === 'project-detail' 
+      ? {} : undefined
+  );
   const { data: companies, loading: companiesLoading } = useCompanies();
 
   // Filter projects based on search criteria
@@ -87,26 +105,24 @@ function AppContent() {
 
   // Show loading while auth is initializing
   if (authLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-slate-800 to-amber-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <Building2 className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">LuxuryGhar</h1>
-          <p className="text-slate-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   // Role-based routing
   if (profile?.user_type === 'admin') {
-    return <AdminApp />;
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <AdminApp />
+      </Suspense>
+    );
   }
 
   if (profile?.user_type === 'builder') {
-    return <BuilderDashboard />;
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <BuilderDashboard />
+      </Suspense>
+    );
   }
 
   // Regular user/buyer interface
@@ -196,28 +212,29 @@ function AppContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {companies.map((company) => (
-            <BuilderCard
-              key={company.id}
-              builder={{
-                id: company.id,
-                name: company.name,
-                logo: company.logo_url || 'https://images.pexels.com/photos/1267338/pexels-photo-1267338.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-                description: company.description || '',
-                founded: company.founded_year?.toString() || 'N/A',
-                headquarters: company.headquarters || 'N/A',
-                website: company.website || 'N/A',
-                phone: company.phone || 'N/A',
-                email: company.email || 'N/A',
-                totalProjects: company.total_projects,
-                rating: company.rating,
-                credibilityScore: company.credibility_score,
-                awards: company.awards || [],
-                certifications: company.certifications || [],
-                completedOnTime: company.completed_on_time,
-                customerSatisfaction: company.customer_satisfaction
-              }}
-              onClick={handleBuilderClick}
-            />
+            <Suspense key={company.id} fallback={<div className="h-64 bg-slate-100 rounded-2xl animate-pulse" />}>
+              <BuilderCard
+                builder={{
+                  id: company.id,
+                  name: company.name,
+                  logo: company.logo_url || 'https://images.pexels.com/photos/1267338/pexels-photo-1267338.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+                  description: company.description || '',
+                  founded: company.founded_year?.toString() || 'N/A',
+                  headquarters: company.headquarters || 'N/A',
+                  website: company.website || 'N/A',
+                  phone: company.phone || 'N/A',
+                  email: company.email || 'N/A',
+                  totalProjects: company.total_projects,
+                  rating: company.rating,
+                  credibilityScore: company.credibility_score,
+                  awards: company.awards || [],
+                  certifications: company.certifications || [],
+                  completedOnTime: company.completed_on_time,
+                  customerSatisfaction: company.customer_satisfaction
+                }}
+                onClick={handleBuilderClick}
+              />
+            </Suspense>
           ))}
         </div>
       </div>
@@ -312,31 +329,33 @@ function AppContent() {
         return renderContactPage();
       case 'project-detail':
         return selectedProject ? (
-          <ProjectDetail
-            project={{
-              id: selectedProject.id,
-              builderId: selectedProject.company_id,
-              builderName: companies.find(c => c.id === selectedProject.company_id)?.name || 'Unknown',
-              name: selectedProject.name,
-              location: selectedProject.location,
-              city: selectedProject.city,
-              priceRange: { min: selectedProject.price_min, max: selectedProject.price_max },
-              sizeRange: { min: selectedProject.size_min, max: selectedProject.size_max },
-              bedrooms: selectedProject.bedrooms,
-              amenities: selectedProject.amenities,
-              images: selectedProject.images,
-              videos: selectedProject.videos,
-              launchDate: selectedProject.launch_date || '',
-              status: selectedProject.status,
-              description: selectedProject.description || '',
-              highlights: selectedProject.highlights,
-              featured: selectedProject.is_featured,
-              qualityScore: selectedProject.quality_score,
-              constructionProgress: selectedProject.construction_progress,
-              virtualTour: selectedProject.virtual_tour_url
-            }}
-            onBack={() => setCurrentPage('projects')}
-          />
+          <Suspense fallback={<LoadingSpinner />}>
+            <ProjectDetail
+              project={{
+                id: selectedProject.id,
+                builderId: selectedProject.company_id,
+                builderName: companies.find(c => c.id === selectedProject.company_id)?.name || 'Unknown',
+                name: selectedProject.name,
+                location: selectedProject.location,
+                city: selectedProject.city,
+                priceRange: { min: selectedProject.price_min, max: selectedProject.price_max },
+                sizeRange: { min: selectedProject.size_min, max: selectedProject.size_max },
+                bedrooms: selectedProject.bedrooms,
+                amenities: selectedProject.amenities,
+                images: selectedProject.images,
+                videos: selectedProject.videos,
+                launchDate: selectedProject.launch_date || '',
+                status: selectedProject.status,
+                description: selectedProject.description || '',
+                highlights: selectedProject.highlights,
+                featured: selectedProject.is_featured,
+                qualityScore: selectedProject.quality_score,
+                constructionProgress: selectedProject.construction_progress,
+                virtualTour: selectedProject.virtual_tour_url
+              }}
+              onBack={() => setCurrentPage('projects')}
+            />
+          </Suspense>
         ) : renderProjectsPage();
       default:
         return renderHomePage();

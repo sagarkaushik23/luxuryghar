@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo, useCallback } from 'react';
 import { Menu, X, User, Building2, Home, Phone } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import AuthModal from '../Auth/AuthModal';
@@ -8,10 +8,15 @@ interface HeaderProps {
   onNavigate: (page: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
+const Header: React.FC<HeaderProps> = memo(({ currentPage, onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { user, profile, signOut, loading } = useAuth();
+
+  const handleNavigation = useCallback((page: string) => {
+    onNavigate(page);
+    setIsMenuOpen(false);
+  }, [onNavigate]);
 
   const navigationItems = [
     { id: 'home', label: 'Home', icon: Home },
@@ -44,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
               {navigationItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => onNavigate(item.id)}
+                  onClick={() => handleNavigation(item.id)}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     currentPage === item.id
                       ? 'text-amber-600 bg-amber-50'
@@ -115,8 +120,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
                 <button
                   key={item.id}
                   onClick={() => {
-                    onNavigate(item.id);
-                    setIsMenuOpen(false);
+                    handleNavigation(item.id);
                   }}
                   className={`flex items-center space-x-3 w-full px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     currentPage === item.id
@@ -136,8 +140,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
                     {profile?.user_type === 'builder' && (
                       <button
                         onClick={() => {
-                          onNavigate('dashboard');
-                          setIsMenuOpen(false);
+                          handleNavigation('dashboard');
                         }}
                         className="w-full px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium"
                       >
@@ -147,8 +150,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
                     {profile?.user_type === 'admin' && (
                       <button
                         onClick={() => {
-                          onNavigate('admin');
-                          setIsMenuOpen(false);
+                          handleNavigation('admin');
                         }}
                         className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
                       >
@@ -187,6 +189,8 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
       )}
     </>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

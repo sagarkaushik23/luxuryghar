@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { MapPin, Home, Calendar, Star, ArrowRight } from 'lucide-react';
 import type { Database } from '../../lib/supabase';
 
@@ -11,7 +11,7 @@ interface ProjectCardProps {
   onClick: (projectId: string) => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, company, onClick }) => {
+const ProjectCard: React.FC<ProjectCardProps> = memo(({ project, company, onClick }) => {
   const formatPrice = (price: number) => {
     if (price >= 10000000) {
       return `₹${(price / 10000000).toFixed(1)}Cr`;
@@ -146,6 +146,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, company, onClick }) 
       </div>
     </div>
   );
-};
+});
+
+ProjectCard.displayName = 'ProjectCard';
 
 export default ProjectCard;

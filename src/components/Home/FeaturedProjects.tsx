@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { MapPin, Home, ArrowRight, Star } from 'lucide-react';
 import type { Database } from '../../lib/supabase';
 
@@ -11,7 +11,7 @@ interface FeaturedProjectsProps {
   onProjectClick: (projectId: string) => void;
 }
 
-const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ projects, companies, onProjectClick }) => {
+const FeaturedProjects: React.FC<FeaturedProjectsProps> = memo(({ projects, companies, onProjectClick }) => {
   const formatPrice = (price: number) => {
     if (price >= 10000000) {
       return `₹${(price / 10000000).toFixed(1)}Cr`;
@@ -146,6 +146,8 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ projects, companies
       </div>
     </section>
   );
-};
+});
+
+FeaturedProjects.displayName = 'FeaturedProjects';
 
 export default FeaturedProjects;

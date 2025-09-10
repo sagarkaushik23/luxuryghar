@@ -129,16 +129,20 @@ export function useSupabase<T extends keyof Tables>(
 }
 
 // Specific hooks for common operations
-export function useProjects(filters?: { city?: string; company_id?: string; is_featured?: boolean }) {
+export function useProjects(filters?: { city?: string; company_id?: string; is_featured?: boolean }, enabled: boolean = true) {
+  const [shouldFetch, setShouldFetch] = useState(enabled);
+  
   return useSupabase('projects', {
     filter: filters,
-    orderBy: { column: 'created_at', ascending: false }
+    orderBy: { column: 'created_at', ascending: false },
+    enabled: shouldFetch
   });
 }
 
-export function useCompanies() {
+export function useCompanies(enabled: boolean = true) {
   return useSupabase('companies', {
-    orderBy: { column: 'name', ascending: true }
+    orderBy: { column: 'name', ascending: true },
+    enabled
   });
 }
 
