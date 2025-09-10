@@ -12,6 +12,7 @@ export function useSupabase<T extends keyof Tables>(
     filter?: Record<string, any>;
     orderBy?: { column: string; ascending?: boolean };
     limit?: number;
+    enabled?: boolean;
   }
 ) {
   const [data, setData] = useState<Tables[T]['Row'][]>([]);
@@ -21,6 +22,12 @@ export function useSupabase<T extends keyof Tables>(
   // Fetch data
   const fetchData = async () => {
     try {
+      // If disabled or client not configured, no-op
+      if (options?.enabled === false || !supabase) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       let query = supabase.from(tableName).select(options?.select || '*');
 
@@ -115,6 +122,7 @@ export function useSupabase<T extends keyof Tables>(
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableName, JSON.stringify(options)]);
 
   return {
@@ -129,13 +137,14 @@ export function useSupabase<T extends keyof Tables>(
 }
 
 // Specific hooks for common operations
-export function useProjects(filters?: { city?: string; company_id?: string; is_featured?: boolean }, enabled: boolean = true) {
-  const [shouldFetch, setShouldFetch] = useState(enabled);
-  
+export function useProjects(
+  filters?: { city?: string; company_id?: string; is_featured?: boolean },
+  enabled: boolean = true
+) {
   return useSupabase('projects', {
     filter: filters,
     orderBy: { column: 'created_at', ascending: false },
-    enabled: shouldFetch
+    enabled
   });
 }
 

@@ -51,6 +51,8 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = memo(({ projects, comp
                   src={project.images?.[0] || 'https://images.pexels.com/photos/1396132/pexels-photo-1396132.jpeg?auto=compress&cs=tinysrgb&w=800&h=600'}
                   alt={project.name}
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute top-4 left-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${

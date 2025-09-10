@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useProjects, useCompanies } from './hooks/useSupabase';
+import { supabase } from './lib/supabase';
 import Header from './components/Layout/Header';
 import SearchSection from './components/Home/SearchSection';
 import FeaturedProjects from './components/Home/FeaturedProjects';
@@ -34,11 +35,14 @@ function AppContent() {
   const [searchFilters, setSearchFilters] = useState<FilterOptions | null>(null);
 
   // Fetch data from Supabase
+  const supabaseEnabled = Boolean(supabase);
+  const shouldLoadProjects = (currentPage === 'home' || currentPage === 'projects' || currentPage === 'project-detail');
+
   const { data: allProjects, loading: projectsLoading } = useProjects(
-    currentPage === 'home' || currentPage === 'projects' || currentPage === 'project-detail' 
-      ? {} : undefined
+    shouldLoadProjects ? {} : undefined,
+    supabaseEnabled && shouldLoadProjects
   );
-  const { data: companies, loading: companiesLoading } = useCompanies();
+  const { data: companies, loading: companiesLoading } = useCompanies(supabaseEnabled);
 
   // Filter projects based on search criteria
   const filteredProjects = React.useMemo(() => {

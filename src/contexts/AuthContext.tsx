@@ -37,6 +37,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If Supabase is not configured, mark as unauthenticated and stop loading
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -68,6 +74,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
@@ -88,6 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, userData: any) => {
     try {
+      if (!supabase) throw new Error('Auth is not configured');
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -126,6 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      if (!supabase) throw new Error('Auth is not configured');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -140,6 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      if (!supabase) return;
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (error) {
@@ -151,6 +164,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
 
     try {
+      if (!supabase) throw new Error('Profile update not available');
       const { error } = await supabase
         .from('user_profiles')
         .update(updates)
