@@ -34,7 +34,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
                 <Building2 className="w-6 h-6 text-white" />
               </div>
               <div className="ml-3">
-                <h1 className="text-xl font-bold text-slate-800">EliteHomes</h1>
+                <h1 className="text-xl font-bold text-slate-800">LuxuryGhar</h1>
                 <p className="text-xs text-slate-600">Premium Real Estate</p>
               </div>
             </div>

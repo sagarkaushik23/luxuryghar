@@ -51,7 +51,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, currentPage, onNavi
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-800">EliteHomes</h1>
+              <h1 className="text-lg font-bold text-slate-800">LuxuryGhar</h1>
               <p className="text-xs text-slate-500">Admin Panel</p>
             </div>
           </div>

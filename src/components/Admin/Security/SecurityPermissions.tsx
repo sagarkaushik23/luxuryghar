@@ -55,7 +55,7 @@ const SecurityPermissions: React.FC = () => {
   const mockAdminUsers: AdminUser[] = [
     {
       id: '1',
-      name: 'EliteHomes Super Admin',
+      name: 'LuxuryGhar Super Admin',
       email: 'admin@elitehomes.com',
       role: 'super_admin',
       permissions: [
@@ -114,7 +114,7 @@ const SecurityPermissions: React.FC = () => {
     {
       id: '1',
       userId: '1',
-      userName: 'EliteHomes Super Admin',
+      userName: 'LuxuryGhar Super Admin',
       action: 'LOGIN',
       resource: 'Admin Panel',
       timestamp: '2024-01-20T10:30:00Z',

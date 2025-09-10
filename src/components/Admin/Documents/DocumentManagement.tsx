@@ -51,7 +51,7 @@ const DocumentManagement: React.FC = () => {
       fileSize: '2.4 MB',
       status: 'verified',
       expiryDate: '2026-01-15',
-      verifiedBy: 'EliteHomes Admin',
+      verifiedBy: 'LuxuryGhar Admin',
       verifiedAt: '2024-01-16',
       accessLevel: 'public'
     },
@@ -82,7 +82,7 @@ const DocumentManagement: React.FC = () => {
       uploadedAt: '2024-01-08',
       fileSize: '3.2 MB',
       status: 'verified',
-      verifiedBy: 'EliteHomes Admin',
+      verifiedBy: 'LuxuryGhar Admin',
       verifiedAt: '2024-01-09',
       accessLevel: 'vip'
     },
@@ -111,7 +111,7 @@ const DocumentManagement: React.FC = () => {
       uploadedAt: '2024-01-01',
       fileSize: '0.8 MB',
       status: 'verified',
-      verifiedBy: 'EliteHomes Admin',
+      verifiedBy: 'LuxuryGhar Admin',
       verifiedAt: '2024-01-02',
       accessLevel: 'admin'
     }
